@@ -821,6 +821,25 @@ cdef class Registration:
                 undistorted.width, undistorted.height))
         self.ptr.undistortDepth(depth.ptr, undistorted.ptr)
 
+    @cython.boundscheck(False)
+    @cython.wraparound(False)
+    def getPointsXYZRGB(self, Frame undistorted, Frame registered):
+        cdef int width = undistorted.width
+        cdef int height = undistorted.height
+        cdef np.ndarray xyzrgb = np.zeros([height,
+            width, 6], dtype=np.float32)
+        for r in range(height):
+            for c in range(width):
+                x, y, z, b, g, r = self.getPointXYZRGB(
+                    undistorted, registered, r, c)
+                xyzrgb[r, c, 0] = x
+                xyzrgb[r, c, 1] = y
+                xyzrgb[r, c, 2] = z
+                xyzrgb[r, c, 3] = r
+                xyzrgb[r, c, 4] = g
+                xyzrgb[r, c, 5] = b
+        return xyzrgb
+
     def getPointXYZRGB(self, Frame undistorted, Frame registered, r, c):
         """Same as ``libfreenect2::Registration::getPointXYZRGB``.
 
