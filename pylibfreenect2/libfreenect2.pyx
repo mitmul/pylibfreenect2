@@ -824,7 +824,7 @@ cdef class Registration:
     @cython.boundscheck(False)
     @cython.wraparound(False)
     def getPointsXYZRGB(self, Frame undistorted, Frame registered):
-        """Returns point clouds in (X, Y, Z, B, G, R) order.
+        """Returns point clouds in (X, Y, Z, BGR) format.
 
         Args:
             undistorted (Frame): Undistorted depth image.
@@ -832,12 +832,12 @@ cdef class Registration:
 
         Returns:
             xyzbgr (numpy.ndarray): A point cloud whose size is
-                (height, width, 6).
+                (height, width, 4).
 
         """
         cdef int width = undistorted.width
         cdef int height = undistorted.height
-        cdef np.ndarray xyzbgr = np.zeros([height, width, 6], dtype=np.float32)
+        cdef np.ndarray xyzbgr = np.zeros([height, width, 4], dtype=np.float32)
         cdef float x = 0, y = 0, z = 0, rgb = 0
         cdef uint8_t* bgrptr
         for r in range(height):
@@ -847,10 +847,11 @@ cdef class Registration:
                 xyzbgr[r, c, 0] = x
                 xyzbgr[r, c, 1] = y
                 xyzbgr[r, c, 2] = z
-                bgrptr = reinterpret_cast[uint8_pt](&rgb);
-                xyzbgr[r, c, 3] = bgrptr[0]
-                xyzbgr[r, c, 4] = bgrptr[1]
-                xyzbgr[r, c, 5] = bgrptr[2]
+                xyzbgr[r, c, 3] = rgb
+                # bgrptr = reinterpret_cast[uint8_pt](&rgb);
+                # xyzbgr[r, c, 3] = bgrptr[0]
+                # xyzbgr[r, c, 4] = bgrptr[1]
+                # xyzbgr[r, c, 5] = bgrptr[2]
         return xyzbgr
 
     def getPointXYZRGB(self, Frame undistorted, Frame registered, r, c):
