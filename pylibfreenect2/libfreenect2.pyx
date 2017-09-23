@@ -847,7 +847,7 @@ cdef class Registration:
                 xyzbgr[r, c, 0] = x
                 xyzbgr[r, c, 1] = y
                 xyzbgr[r, c, 2] = z
-                bgrptr = reinterpret_cast[uint8_pt](&rgb);
+                bgrptr = reinterpret_cast[uint8_pt](&rgb)
                 xyzbgr[r, c, 3] = bgrptr[0]
                 xyzbgr[r, c, 4] = bgrptr[1]
                 xyzbgr[r, c, 5] = bgrptr[2]
